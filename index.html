@@ -16,6 +16,7 @@
     code, pre { background: #eee; padding: 0.1em 0.3em; border-radius: 4px; }
     pre { padding: 1em; overflow-x: auto; }
     nav { font-size: 0.9em; margin-bottom: 2em; opacity: 0.8; }
+    .meta { font-size: 0.85em; opacity: 0.6; margin-bottom: 1em; }
     .loading { opacity: 0.5; }
     .err { color: #c33; padding: 1em; border: 1px solid #c33; border-radius: 4px; }
   </style>
@@ -26,19 +27,41 @@
     <a href="https://github.com/tetsu-yokozeki/test-evidence-cron/tree/main/reports">全レポート</a> ·
     <a href="https://github.com/tetsu-yokozeki/test-evidence-cron">リポジトリ</a>
   </nav>
+  <div id="meta" class="meta"></div>
   <div id="content" class="loading">読込中...</div>
   <script>
-    const params = new URLSearchParams(location.search);
-    const slug = params.get("date");
-    const mdPath = slug ? `/reports/${slug}.md` : `/reports/latest.md`;
+    // Path patterns:
+    //  /                          → reports/latest.md
+    //  /YYYY-MM-DD                → reports/YYYY-MM-DD/index.md (fallback: latest slug)
+    //  /YYYY-MM-DD/{slug}         → reports/YYYY-MM-DD/{slug}.md
+    //  /reports/YYYY-MM-DD/{slug} → same as above
+    const path = location.pathname.replace(/\/$/, "");
+    const dateRe = /^(\/reports)?\/(\d{4}-\d{2}-\d{2})(?:\/([a-z0-9-]+))?$/;
+    const m = path.match(dateRe);
+    let mdPath;
+    if (!path || path === "") {
+      mdPath = "/reports/latest.md";
+      document.getElementById("meta").textContent = "最新レポート";
+    } else if (m) {
+      const [, , date, slug] = m;
+      mdPath = slug ? `/reports/${date}/${slug}.md` : `/reports/${date}/index.md`;
+      document.getElementById("meta").textContent = `${date}${slug ? " / " + slug : ""}`;
+    } else {
+      mdPath = "/reports/latest.md";
+      document.getElementById("meta").textContent = "最新レポート (fallback)";
+    }
     fetch(mdPath)
       .then(r => r.ok ? r.text() : Promise.reject(r.status))
       .then(md => {
         document.getElementById("content").innerHTML = marked.parse(md);
         document.getElementById("content").classList.remove("loading");
+        // Extract first H1 as page title
+        const h1 = document.querySelector("#content h1");
+        if (h1) document.title = h1.textContent + " | 高山DMO";
       })
       .catch(err => {
-        document.getElementById("content").innerHTML = `<div class="err">レポート読込失敗 (${err})<br>${mdPath}</div>`;
+        document.getElementById("content").innerHTML = `<div class="err">レポートが見つかりませんでした (HTTP ${err})<br><code>${mdPath}</code></div>`;
+        document.getElementById("content").classList.remove("loading");
       });
   </script>
 </body>

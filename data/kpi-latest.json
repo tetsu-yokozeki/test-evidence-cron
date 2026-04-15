@@ -1,0 +1,33 @@
+{
+  "_comment": "このファイルは将来的にGH Actionsが毎朝06:00 JSTにBQから取得して上書きする。現在はダミー値。",
+  "date": "2026-04-14",
+  "generated_at": "2026-04-15T06:00:00+09:00",
+  "data_source": "DUMMY",
+  "metrics": {
+    "visitors": {
+      "total": 18234,
+      "yoy_pct": 12.3,
+      "wow_pct": 5.1,
+      "by_facility": [
+        { "name": "高山陣屋", "count": 3421, "yoy_pct": 8.2 },
+        { "name": "古い町並み", "count": 9821, "yoy_pct": 15.4 },
+        { "name": "飛騨の里", "count": 1892, "yoy_pct": -2.3 },
+        { "name": "その他", "count": 3100, "yoy_pct": 10.1 }
+      ]
+    },
+    "accommodation": {
+      "occupancy_rate": 0.742,
+      "yoy_diff": 0.031,
+      "foreign_ratio": 0.384,
+      "foreign_yoy_diff": 0.052
+    },
+    "nationality_top5": [
+      { "country": "台湾", "share": 0.21 },
+      { "country": "アメリカ", "share": 0.14 },
+      { "country": "香港", "share": 0.11 },
+      { "country": "オーストラリア", "share": 0.09 },
+      { "country": "シンガポール", "share": 0.07 }
+    ]
+  },
+  "notes": "サクラ開花ピーク直後。週末はやや減少見込み。"
+}

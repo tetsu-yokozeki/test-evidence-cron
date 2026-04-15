@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>高山DMO Daily Reports</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", sans-serif; max-width: 760px; margin: 2em auto; padding: 0 1.5em; line-height: 1.7; color: #222; background: #fafafa; }
+    @media (prefers-color-scheme: dark) { body { color: #eaeaea; background: #1a1a1a; } a { color: #6af; } code, pre { background: #2a2a2a; } }
+    h1, h2, h3 { line-height: 1.3; }
+    h1 { border-bottom: 2px solid #888; padding-bottom: 0.3em; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 0.4em 0.8em; }
+    code, pre { background: #eee; padding: 0.1em 0.3em; border-radius: 4px; }
+    pre { padding: 1em; overflow-x: auto; }
+    nav { font-size: 0.9em; margin-bottom: 2em; opacity: 0.8; }
+    .loading { opacity: 0.5; }
+    .err { color: #c33; padding: 1em; border: 1px solid #c33; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">最新</a> ·
+    <a href="https://github.com/tetsu-yokozeki/test-evidence-cron/tree/main/reports">全レポート</a> ·
+    <a href="https://github.com/tetsu-yokozeki/test-evidence-cron">リポジトリ</a>
+  </nav>
+  <div id="content" class="loading">読込中...</div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const slug = params.get("date");
+    const mdPath = slug ? `/reports/${slug}.md` : `/reports/latest.md`;
+    fetch(mdPath)
+      .then(r => r.ok ? r.text() : Promise.reject(r.status))
+      .then(md => {
+        document.getElementById("content").innerHTML = marked.parse(md);
+        document.getElementById("content").classList.remove("loading");
+      })
+      .catch(err => {
+        document.getElementById("content").innerHTML = `<div class="err">レポート読込失敗 (${err})<br>${mdPath}</div>`;
+      });
+  </script>
+</body>
+</html>
